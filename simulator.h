@@ -41,44 +41,29 @@ struct Config
 void init(int num_bidders,double* B,int* T,double* r, Config config)
 {
 	ad_rev = 0;
-	// r即单个广告额外收入不变，B和T成比例增长
+	
 	for (int i = 0;i<num_bidders;i++) 
 	{
 		double factor;
-/*		if (i<num_bidders/10) factor=5;
-		else factor=5.0/9;*/
+
 		B[i] = normal(config.B_base, config.B_range);
 		T[i] = normal(config.T_base, config.T_range);
 		r[i] = normal(config.r_base, config.r_range)/100.0;
-	//	T[i] = int(T[i]*factor);
-	//	B[i]*= factor;
-//}*/
+
 	}
 	for(int i = 0; i < num_bidders/2; i++){
 			r[i] = 0;
 	}
-	//		r[i] = 0;
-//		}
-//	}
+
 	random_shuffle(r, r + num_bidders);//change
 
-/*	for(int i = 0; i < num_bidders; i++){
-		if(T[i]==0)
-			r[i]=0;
-	}*/
-/*	if (factor>1.1)
-			T[i] = int(T[i]*2.5);
-		else
-			T[i] = int(T[i]*factor);
-		B[i]*= factor;
-	}*/
 }
 // 134605
 class Strategy
 {
 	protected:
  	static const int N=1200;
-	static const int BCP_per_auction=200; // to be modified
+	static const int BCP_per_auction=200; 
 	double profit,R_max,c;
 	int n,m;
 	int isBA2 = 0;
@@ -88,7 +73,7 @@ class Strategy
 	char name[233];
 	int BA;
 	int isprop=0;
-	double track1[N], track2[N], track3[N], track4[N], track5[N];//4记录刚好用完impression时剩下的钱
+	double track1[N], track2[N], track3[N], track4[N], track5[N];//4 records budge remained after running up impression
 	int num_track;
 	public:
 

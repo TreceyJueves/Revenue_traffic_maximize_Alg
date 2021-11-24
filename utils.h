@@ -19,7 +19,7 @@ PDD item_feature[num_bidders];
 example data[N];
 int next[N];int last[USER];//record last data of a certain user
 int user_size, item_size;
-map<int, PDD> uis[USER];// 存储user与ad(<num_bidders)的pair
+map<int, PDD> uis[USER];//save user ad pair
 
 PDD operator +(PDD a, PDD b){return PDD(a.FR+b.FR, a.SC+b.SC);}
 PDD operator -(PDD a, PDD b){return PDD(a.FR-b.FR, a.SC-b.SC);}
@@ -28,7 +28,7 @@ PDD operator /(PDD a, double b){return PDD(a.FR/b, a.SC/b);}
 void preprocess(example *data, int data_size)
 {/*{{{*/
 	/*
-	 * 把item和user重编号，freq越大编号越小
+	 * reid item user, the bigger the freq, the smaller the id
 	 * */
 //	cout << "data preprocessing..."<<endl;
 	int* idx= new int[ITEM];
@@ -50,7 +50,7 @@ void preprocess(example *data, int data_size)
 	for (int i=0;i<size;i++) 
 		idx_map[idx[i]]=i;
 	for (int i=0;i<data_size;i++)
-		data[i].user_id = idx_map[data[i].user_id%40000];//user重命名
+		data[i].user_id = idx_map[data[i].user_id%40000];//user rename
 	for (int i=0;i<size;i++) 
 		idx[i]=0;
 //	cout <<"user sorted, size: "<<size <<endl;
@@ -65,7 +65,7 @@ void preprocess(example *data, int data_size)
 	sort(idx, idx+size, [&](int i,int j){ return freqs[i]>freqs[j];});
 	
 //	puts("first item_id");for (int i=0;i<5;i++) printf("%d ", idx[i]);puts("");
-	item_size = size;//item重命名
+	item_size = size;//item rename
 
 	for (int i=0;i<size;i++) 
 		idx_map[idx[i]]=i;
@@ -95,38 +95,26 @@ int simulator(Strategy* strategy, int * vis, int ad_per_video = 7)
 		for (int j=last[user_id],cnt=0;j!=-1;j=next[j])//trace?
 		{
 			cnt++;
-			if (cnt==ad_per_video)//is ad？这段完全没看懂
+			if (cnt==ad_per_video)
 			{
 				cnt=0;
 				
-		//		if (!vis[kth++]) continue;//这在干啥
-		//		cout<<"ads found"<<endl;
-		//		tot = 0;
+
 				for (int bidder_id=0;bidder_id<num_bidders;bidder_id++){//price according to user behavior or avg behavior
-		//			if(bidder_id%500==0)
-		//				cout << "bidder 500"<<endl;
+
 					if (uis[user_id].count(bidder_id))
 						b[bidder_id] = data[j].finish * uis[user_id][bidder_id].FR;
-				/*
-				 * 广告点击率*位置点击率 finish
-				 * */
+
 					else
 						b[bidder_id] = data[j].finish * item_feature[bidder_id].FR;
-	//				tot+=b[bidder_id];
 					
 				}
-		//		tot/=1000;
-		//		tot1+=tot;
-			//	cout << "b[0] ="<<b[0]<<endl;
-			//	cout << "num_auction: "<<num_auction<<endl;
 				if(user_id %2==0){
 					cha_b(b);
 				}
 				int ok=strategy->auction(b);
-		//		cout << "ok = "<<ok<<endl;
+
 				num_auction++;
-	//			if(num_auction % 1000==0)
-	//				cout <<"checkpoint "<<num_auction<<endl; 
 				if (ok) return num_auction;
 				if (num_auction == auction_limit) break;
 			}
