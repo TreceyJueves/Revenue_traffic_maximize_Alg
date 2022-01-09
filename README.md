@@ -1,5 +1,5 @@
 # Revenue_traffic_maximize_Alg
-## Experiment Code for Revenue and User Traffic Maximization \\ in Mobile Short-Video Advertising, AAMAS 2022
+### Experiment Code for Revenue and User Traffic Maximization in Mobile Short-Video Advertising, AAMAS 2022
 
 compile main.cpp or cal__.cpp to get corresponding exe file
 
